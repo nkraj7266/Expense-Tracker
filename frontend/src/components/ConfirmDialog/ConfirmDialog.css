@@ -1,0 +1,31 @@
+.confirm-dialog__message {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.confirm-dialog__actions button {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.confirm-dialog__actions button.confirm-dialog__primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.confirm-dialog__actions button.confirm-dialog__danger {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: white;
+}

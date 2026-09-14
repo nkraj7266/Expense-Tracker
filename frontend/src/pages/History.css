@@ -1,0 +1,48 @@
+.history-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.history-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.history-page__filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.history-page__filters input,
+.history-page__filters select {
+  min-width: 120px;
+}
+
+.history-page__clear {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  height: 36px;
+}
+
+.history-page__summary {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.history-page__error {
+  color: var(--color-danger);
+}

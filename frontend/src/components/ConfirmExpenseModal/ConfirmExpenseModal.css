@@ -1,0 +1,54 @@
+.confirm-modal__raw {
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: 13px;
+  margin: 0;
+}
+
+.confirm-modal__form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.confirm-modal__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.confirm-modal__notes {
+  grid-column: 1 / -1;
+}
+
+.confirm-modal__error {
+  grid-column: 1 / -1;
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 0;
+}
+
+.confirm-modal__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.confirm-modal__actions button {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-weight: 600;
+}
+
+.confirm-modal__actions button[type='submit'] {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}

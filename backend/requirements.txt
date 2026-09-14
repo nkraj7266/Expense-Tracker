@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+motor
+pydantic
+python-dotenv
+google-genai
+pyjwt
+argon2-cffi
+email-validator
+slowapi

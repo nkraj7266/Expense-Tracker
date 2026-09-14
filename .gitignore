@@ -1,0 +1,23 @@
+# Environment files (contain real secrets — never commit)
+.env
+.env.*
+!.env.example
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+
+# Backend
+backend/__pycache__
+backend/**/__pycache__
+backend/.venv
+backend/venv
+*.pyc
+
+# Editor/OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.log

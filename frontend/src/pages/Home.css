@@ -1,0 +1,20 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.home-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.home-page__total {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.home-page__error {
+  color: var(--color-danger);
+}
