@@ -76,15 +76,25 @@ def _cookie_domain() -> Optional[str]:
     return settings.cookie_domain
 
 
+def _cookie_samesite() -> Literal["lax", "none"]:
+    # SameSite=None is required when frontend and backend are on different
+    # sites (e.g. a Netlify frontend + a Render backend) so the browser will
+    # attach the cookie to cross-site fetches at all. It requires Secure, so
+    # only use it once we're actually on HTTPS (COOKIE_SECURE=true); local
+    # dev (same site: localhost:5173 + localhost:8000) stays on Lax.
+    return "none" if settings.cookie_secure else "lax"
+
+
 def set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
     domain = _cookie_domain()
+    samesite = _cookie_samesite()
     response.set_cookie(
         ACCESS_COOKIE_NAME,
         access_token,
         max_age=settings.jwt_access_token_expires_minutes * 60,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="lax",
+        samesite=samesite,
         domain=domain,
         path="/",
     )
@@ -94,7 +104,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
         max_age=settings.jwt_refresh_token_expires_days * 24 * 60 * 60,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="lax",
+        samesite=samesite,
         domain=domain,
         path="/auth",
     )
@@ -102,5 +112,8 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
 
 def clear_auth_cookies(response: Response) -> None:
     domain = _cookie_domain()
-    response.delete_cookie(ACCESS_COOKIE_NAME, domain=domain, path="/")
-    response.delete_cookie(REFRESH_COOKIE_NAME, domain=domain, path="/auth")
+    samesite = _cookie_samesite()
+    response.delete_cookie(ACCESS_COOKIE_NAME, domain=domain, path="/", secure=settings.cookie_secure, samesite=samesite)
+    response.delete_cookie(
+        REFRESH_COOKIE_NAME, domain=domain, path="/auth", secure=settings.cookie_secure, samesite=samesite
+    )
