@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import ExpenseList from '../components/ExpenseList/ExpenseList'
+import ExpenseListSkeleton from '../components/ExpenseList/ExpenseListSkeleton'
 import useExpenses from '../hooks/useExpenses'
 import useCategories from '../hooks/useCategories'
 import { useExpensesRefresh } from '../context/ExpensesRefreshContext'
@@ -26,7 +27,7 @@ export default function Home() {
           {expenses[0]?.currency || 'INR'} {total.toFixed(2)}
         </span>
       </div>
-      {loading && <p>Loading…</p>}
+      {loading && <ExpenseListSkeleton />}
       {error && <p className="home-page__error">{error}</p>}
       {!loading && !error && (
         <ExpenseList

@@ -32,3 +32,24 @@
   font-size: 13px;
   color: var(--color-text-muted);
 }
+
+.summary-card__skeleton-label {
+  width: 80px;
+  height: 12px;
+}
+
+.summary-card__skeleton-total {
+  width: 140px;
+  height: 28px;
+}
+
+.summary-card__skeleton-count {
+  width: 90px;
+  height: 12px;
+}
+
+.chart-skeleton {
+  width: 100%;
+  height: 280px;
+  border-radius: var(--radius-md);
+}

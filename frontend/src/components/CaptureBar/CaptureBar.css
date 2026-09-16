@@ -70,3 +70,23 @@
   font-size: 13px;
   color: var(--color-danger);
 }
+
+@media (max-width: 640px) {
+  .capture-bar__form {
+    flex-wrap: wrap;
+  }
+
+  .capture-bar__input {
+    flex-basis: 100%;
+  }
+
+  .capture-bar__mic {
+    width: var(--touch-target);
+    height: var(--touch-target);
+  }
+
+  .capture-bar__submit {
+    flex: 1;
+    height: var(--touch-target);
+  }
+}

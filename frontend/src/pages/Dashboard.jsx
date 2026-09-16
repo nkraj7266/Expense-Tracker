@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import MonthlySummaryCard from '../components/Charts/MonthlySummaryCard'
 import CategoryBreakdown from '../components/Charts/CategoryBreakdown'
 import SpendTrend from '../components/Charts/SpendTrend'
+import { ChartPanelSkeleton, SummaryCardSkeleton } from '../components/Charts/DashboardSkeleton'
 import { getSummary, getTrend } from '../api/analytics'
 import { useExpensesRefresh } from '../context/ExpensesRefreshContext'
 import './Dashboard.css'
@@ -68,7 +69,21 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {loading && <p>Loading…</p>}
+      {loading && (
+        <>
+          <SummaryCardSkeleton />
+          <div className="dashboard-page__grid">
+            <div className="dashboard-page__panel">
+              <h2>By category</h2>
+              <ChartPanelSkeleton />
+            </div>
+            <div className="dashboard-page__panel">
+              <h2>Last 30 days</h2>
+              <ChartPanelSkeleton />
+            </div>
+          </div>
+        </>
+      )}
       {error && <p className="dashboard-page__error">{error}</p>}
 
       {!loading && !error && summary && (

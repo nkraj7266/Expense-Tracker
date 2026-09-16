@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react'
+import FilterListIcon from '@mui/icons-material/FilterList'
+import CloseIcon from '@mui/icons-material/Close'
 import ExpenseList from '../components/ExpenseList/ExpenseList'
+import ExpenseListSkeleton from '../components/ExpenseList/ExpenseListSkeleton'
 import useExpenses from '../hooks/useExpenses'
 import useCategories from '../hooks/useCategories'
 import { useExpensesRefresh } from '../context/ExpensesRefreshContext'
@@ -11,6 +14,7 @@ export default function History() {
   const { refreshKey } = useExpensesRefresh()
   const categories = useCategories()
   const [filters, setFilters] = useState(EMPTY_FILTERS)
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
   const appliedFilters = useMemo(() => ({ ...filters, limit: 300 }), [filters])
   const { expenses, loading, error, refetch } = useExpenses(appliedFilters, refreshKey)
@@ -19,11 +23,39 @@ export default function History() {
   const handleClear = () => setFilters(EMPTY_FILTERS)
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const activeFilterCount = Object.values(filters).filter(Boolean).length
 
   return (
     <div className="history-page">
-      <h1>History</h1>
-      <div className="history-page__filters">
+      <div className="history-page__header">
+        <h1>History</h1>
+        <button
+          type="button"
+          className="history-page__filters-toggle"
+          onClick={() => setIsFiltersOpen(true)}
+        >
+          <FilterListIcon fontSize="small" />
+          Filters
+          {activeFilterCount > 0 && <span className="history-page__filters-badge">{activeFilterCount}</span>}
+        </button>
+      </div>
+
+      {isFiltersOpen && (
+        <div className="history-page__filters-backdrop" onClick={() => setIsFiltersOpen(false)} />
+      )}
+
+      <div className={`history-page__filters${isFiltersOpen ? ' history-page__filters--open' : ''}`}>
+        <div className="history-page__filters-panel-header">
+          <h2>Filters</h2>
+          <button
+            type="button"
+            className="history-page__filters-close"
+            onClick={() => setIsFiltersOpen(false)}
+            aria-label="Close filters"
+          >
+            <CloseIcon fontSize="small" />
+          </button>
+        </div>
         <label>
           From
           <input type="date" value={filters.from} onChange={handleChange('from')} />
@@ -59,10 +91,11 @@ export default function History() {
           Clear filters
         </button>
       </div>
+
       <div className="history-page__summary">
         {expenses.length} expense{expenses.length === 1 ? '' : 's'} · {expenses[0]?.currency || 'INR'} {total.toFixed(2)}
       </div>
-      {loading && <p>Loading…</p>}
+      {loading && <ExpenseListSkeleton rows={5} />}
       {error && <p className="history-page__error">{error}</p>}
       {!loading && !error && <ExpenseList expenses={expenses} categories={categories} onChanged={refetch} />}
     </div>

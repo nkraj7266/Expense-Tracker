@@ -50,16 +50,20 @@
   color: var(--color-text-muted);
 }
 
+.app-shell__theme-toggle,
 .app-shell__logout {
-  padding: var(--space-1) var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-bg);
   color: var(--color-text);
-  font-size: 13px;
-  font-weight: 500;
 }
 
+.app-shell__theme-toggle:hover,
 .app-shell__logout:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
@@ -74,4 +78,68 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+.app-shell__tabbar {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .app-shell__header {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .app-shell__nav {
+    display: none;
+  }
+
+  .app-shell__brand {
+    font-size: 16px;
+  }
+
+  .app-shell__user {
+    display: none;
+  }
+
+  .app-shell__theme-toggle,
+  .app-shell__logout {
+    width: var(--touch-target);
+    height: var(--touch-target);
+  }
+
+  .app-shell__main {
+    padding: var(--space-4) var(--space-4) calc(var(--tabbar-height) + var(--space-4));
+    gap: var(--space-4);
+  }
+
+  .app-shell__tabbar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--tabbar-height);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    z-index: 10;
+  }
+
+  .app-shell__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: var(--touch-target);
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .app-shell__tab.active {
+    color: var(--color-primary);
+  }
 }

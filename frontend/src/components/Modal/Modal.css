@@ -30,3 +30,27 @@
   flex-direction: column;
   gap: var(--space-3);
 }
+
+@media (max-width: 640px) {
+  .modal__overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: none;
+    max-height: 92vh;
+    height: 92vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+  }
+
+  .modal__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}

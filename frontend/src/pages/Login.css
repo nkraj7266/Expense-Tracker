@@ -1,7 +1,10 @@
 .auth-page {
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding-top: var(--space-6);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--space-6) var(--space-4);
 }
 
 .auth-card {
@@ -17,7 +20,21 @@
   gap: var(--space-4);
 }
 
+.auth-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auth-card__greeting {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
 .auth-card__title {
+  margin: 0;
   font-size: 22px;
 }
 

@@ -3,6 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import './Login.css'
 
+function getGreeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -31,7 +38,10 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1 className="auth-card__title">Log in</h1>
+        <div className="auth-card__header">
+          <p className="auth-card__greeting">{getGreeting()} 👋</p>
+          <h1 className="auth-card__title">Log in</h1>
+        </div>
         <form className="auth-card__form" onSubmit={handleSubmit}>
           <div className="auth-card__field">
             <label htmlFor="login-email">Email</label>

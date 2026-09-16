@@ -24,10 +24,24 @@
 
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+
+  /* Mobile breakpoint is a literal (640px) in each @media query below —
+     CSS custom properties can't be used inside media query conditions.
+     Keep every "@media (max-width: 640px)" in the app in sync with this. */
+  --bp-mobile: 640px;
+  --touch-target: 44px;
+  --tabbar-height: 56px;
 }
 
+/* Theme resolution order:
+   1. No `data-theme` attribute on <html> -> follow the OS via this media query
+      (the app's default, "system" theme, set by ThemeContext).
+   2. `data-theme="dark"` / `data-theme="light"` on <html> -> explicit user
+      choice from the theme toggle, overriding the OS preference either way.
+   Both blocks list the same dark-palette values on purpose — see
+   frontend/src/context/ThemeContext.jsx for the JS side. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --color-bg: #0f172a;
     --color-surface: #1e293b;
     --color-border: #334155;
@@ -36,4 +50,19 @@
     --color-primary: #818cf8;
     --color-primary-hover: #6366f1;
   }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-border: #334155;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-primary: #818cf8;
+  --color-primary-hover: #6366f1;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }

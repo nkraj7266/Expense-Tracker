@@ -35,3 +35,13 @@
   color: var(--color-text-muted);
   padding: var(--space-6) 0;
 }
+
+.expense-list__skeleton-heading {
+  width: 140px;
+  height: 12px;
+}
+
+.expense-list__skeleton-total {
+  width: 60px;
+  height: 12px;
+}

@@ -29,3 +29,45 @@
   border-color: var(--color-danger);
   color: white;
 }
+
+@media (max-width: 640px) {
+  .confirm-dialog.modal {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: 80vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding-top: calc(var(--space-5) + 14px);
+    animation: confirm-dialog-slide-up 0.3s ease;
+  }
+
+  .confirm-dialog.modal::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-border);
+  }
+
+  .confirm-dialog__actions {
+    flex-direction: column-reverse;
+  }
+
+  .confirm-dialog__actions button {
+    min-height: var(--touch-target);
+  }
+}
+
+@keyframes confirm-dialog-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

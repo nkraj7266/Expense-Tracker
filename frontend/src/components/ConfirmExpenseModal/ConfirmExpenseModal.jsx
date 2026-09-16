@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createExpense } from '../../api/expenses'
 import useCategories from '../../hooks/useCategories'
+import { useNotify } from '../../context/NotificationContext'
 import Modal from '../Modal/Modal'
 import './ConfirmExpenseModal.css'
 
@@ -8,6 +9,7 @@ const PAYMENT_METHODS = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Net Bankin
 
 export default function ConfirmExpenseModal({ draft, onClose, onSaved }) {
   const categories = useCategories()
+  const notify = useNotify()
   const [form, setForm] = useState({
     amount: draft.amount,
     currency: draft.currency,
@@ -49,9 +51,11 @@ export default function ConfirmExpenseModal({ draft, onClose, onSaved }) {
         llm_model: draft.llm_model,
         llm_confidence: draft.llm_confidence,
       })
+      notify.success('Expense added')
       onSaved()
     } catch (err) {
       setError(err.message)
+      notify.error(err.message)
     } finally {
       setIsSaving(false)
     }

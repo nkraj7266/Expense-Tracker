@@ -1,0 +1,7 @@
+/* Keep toasts clear of the fixed bottom tab bar on mobile (App.css's
+   .app-shell__tabbar, height var(--tabbar-height)). */
+@media (max-width: 640px) {
+  .MuiSnackbar-root {
+    bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom) + var(--space-3)) !important;
+  }
+}

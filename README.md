@@ -1,7 +1,7 @@
 # Expense Tracker
 
-Voice/text-driven personal expense tracker. See [PLAN.md](PLAN.md) for the full
-architecture, data model, and build phases.
+Voice/text-driven personal expense tracker. See [docs/PLAN.md](docs/PLAN.md) for the full
+architecture, data model, and build phases (local-only, not tracked in git).
 
 **Stack:** React + JavaScript (Vite, vanilla CSS) · FastAPI · MongoDB · Google Gemini API (`gemini-3.5-flash-lite`)
 
@@ -9,7 +9,7 @@ architecture, data model, and build phases.
 ExpenseTracker/
   frontend/     React + Vite app
   backend/      FastAPI app
-  PLAN.md       Architecture & build plan
+  docs/         Planning notes & memory log (local-only, gitignored)
 ```
 
 ---
@@ -86,7 +86,7 @@ Backend will be available at `http://localhost:8000`.
 
 ## Accounts & auth
 
-The app is multi-user (see [AUTH_PLAN.md](AUTH_PLAN.md)): sign up at `/signup` in the
+The app is multi-user (see [docs/AUTH_PLAN.md](docs/AUTH_PLAN.md)): sign up at `/signup` in the
 frontend, or `POST /auth/signup {"email", "password"}`. Sessions use short-lived,
 `httpOnly` cookies (never `localStorage`), with a rotating, revocable refresh token.
 
@@ -104,4 +104,4 @@ python scripts/backfill_legacy_user.py --email you@example.com
 
 - Never commit `.env` files — only `.env.example` (placeholders) is tracked in git.
 - `MONGODB_URI` can point at a local MongoDB instance (`mongodb://localhost:27017`) or an Atlas cluster.
-- See [PLAN.md](PLAN.md) §8 for the phased build order (skeleton → LLM parsing → voice input → analytics → budgets).
+- See [docs/PLAN.md](docs/PLAN.md) §8 for the phased build order (skeleton → LLM parsing → voice input → analytics → budgets).

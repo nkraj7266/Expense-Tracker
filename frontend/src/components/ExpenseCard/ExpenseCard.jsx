@@ -1,5 +1,8 @@
 import { useState } from 'react'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { deleteExpense, updateExpense } from '../../api/expenses'
+import { useNotify } from '../../context/NotificationContext'
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog'
 import CategoryIcon from '../CategoryIcon/CategoryIcon'
 import './ExpenseCard.css'
@@ -7,6 +10,7 @@ import './ExpenseCard.css'
 const PAYMENT_METHODS = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Net Banking', 'Wallet', 'Other']
 
 export default function ExpenseCard({ expense, categories, onChanged }) {
+  const notify = useNotify()
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [form, setForm] = useState({
@@ -36,9 +40,11 @@ export default function ExpenseCard({ expense, categories, onChanged }) {
         notes: form.notes || null,
       })
       setIsEditing(false)
+      notify.success('Expense updated')
       onChanged()
     } catch (err) {
       setError(err.message)
+      notify.error(err.message)
     } finally {
       setBusy(false)
     }
@@ -49,9 +55,11 @@ export default function ExpenseCard({ expense, categories, onChanged }) {
     try {
       await deleteExpense(expense.id)
       setShowDeleteConfirm(false)
+      notify.success('Expense deleted')
       onChanged()
     } catch (err) {
       setError(err.message)
+      notify.error(err.message)
     } finally {
       setBusy(false)
     }
@@ -117,11 +125,18 @@ export default function ExpenseCard({ expense, categories, onChanged }) {
           {expense.currency} {expense.amount.toFixed(2)}
         </div>
         <div className="expense-card__actions">
-          <button type="button" onClick={() => setIsEditing(true)}>
-            Edit
+          <button type="button" onClick={() => setIsEditing(true)} aria-label="Edit expense" title="Edit">
+            <EditIcon fontSize="small" />
           </button>
-          <button type="button" onClick={() => setShowDeleteConfirm(true)} disabled={busy}>
-            Delete
+          <button
+            type="button"
+            className="expense-card__delete"
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={busy}
+            aria-label="Delete expense"
+            title="Delete"
+          >
+            <DeleteIcon fontSize="small" />
           </button>
         </div>
       </div>

@@ -15,6 +15,9 @@ backend/.venv
 backend/venv
 *.pyc
 
+# Local docs / planning notes (not for git tracking)
+docs/
+
 # Editor/OS
 .vscode/*
 !.vscode/extensions.json
