@@ -113,6 +113,20 @@ class ExpenseOut(BaseModel):
     updated_at: dt.datetime
 
 
+class ExpenseBatchCreate(BaseModel):
+    expenses: list[ExpenseCreate] = Field(min_length=1)
+
+
+class ExpenseBatchFailure(BaseModel):
+    index: int
+    error: str
+
+
+class ExpenseBatchResult(BaseModel):
+    created: list[ExpenseOut]
+    failed: list[ExpenseBatchFailure]
+
+
 class CategoryOut(BaseModel):
     id: str
     name: str

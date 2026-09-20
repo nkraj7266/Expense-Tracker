@@ -1,0 +1,103 @@
+.modal.batch-confirm-modal {
+  max-width: 720px;
+}
+
+.batch-confirm-modal__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.batch-confirm-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr 140px 130px auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.batch-confirm-row input,
+.batch-confirm-row select {
+  width: 100%;
+  padding: var(--space-2);
+  font-size: 13px;
+}
+
+.batch-confirm-row__remove {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.batch-confirm-row__remove:hover {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: white;
+}
+
+.batch-confirm-row__error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 12px;
+}
+
+.batch-confirm-modal__empty {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.batch-confirm-modal__error {
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 0;
+}
+
+.batch-confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.batch-confirm-modal__actions button {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-weight: 600;
+}
+
+.batch-confirm-modal__actions button:last-child {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+@media (max-width: 640px) {
+  .batch-confirm-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .batch-confirm-row__remove {
+    justify-self: end;
+  }
+
+  .batch-confirm-modal__actions {
+    position: sticky;
+    bottom: 0;
+    padding: var(--space-3) 0;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .batch-confirm-modal__actions button {
+    flex: 1;
+    min-height: var(--touch-target);
+  }
+}

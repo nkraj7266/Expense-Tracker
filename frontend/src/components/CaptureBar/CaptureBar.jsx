@@ -4,10 +4,12 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import useSpeechToText from '../../hooks/useSpeechToText'
 import { parseExpense, parseExpenseImage } from '../../api/expenses'
 import ConfirmExpenseModal from '../ConfirmExpenseModal/ConfirmExpenseModal'
+import BatchConfirmModal from '../BatchConfirmModal/BatchConfirmModal'
 import './CaptureBar.css'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024
+const MAX_IMAGE_NOTE_LENGTH = 500
 
 export default function CaptureBar({ onSaved }) {
   const [text, setText] = useState('')
@@ -15,10 +17,13 @@ export default function CaptureBar({ onSaved }) {
   const [isParsing, setIsParsing] = useState(false)
   const [isParsingImage, setIsParsingImage] = useState(false)
   const [draft, setDraft] = useState(null)
+  const [batchDrafts, setBatchDrafts] = useState(null)
+  const [pendingImage, setPendingImage] = useState(null)
+  const [imageNote, setImageNote] = useState('')
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
   const { isSupported, isListening, transcript, error: speechError, start, stop } = useSpeechToText()
-  const isBusy = isParsing || isParsingImage
+  const isBusy = isParsing || isParsingImage || Boolean(pendingImage)
 
   useEffect(() => {
     if (transcript) {
@@ -37,6 +42,15 @@ export default function CaptureBar({ onSaved }) {
     }
   }
 
+  const handleParsed = (items) => {
+    if (!items || items.length === 0) return
+    if (items.length > 1) {
+      setBatchDrafts(items)
+    } else {
+      setDraft(items[0])
+    }
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     if (!text.trim() || isBusy) return
@@ -44,7 +58,7 @@ export default function CaptureBar({ onSaved }) {
     setError(null)
     try {
       const parsed = await parseExpense(text.trim(), source)
-      setDraft(parsed)
+      handleParsed(parsed)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -52,7 +66,7 @@ export default function CaptureBar({ onSaved }) {
     }
   }
 
-  const handleImageFile = async (file) => {
+  const handleImageFile = (file) => {
     if (!file || isBusy) return
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       setError('Image must be JPEG, PNG, or WEBP')
@@ -62,16 +76,9 @@ export default function CaptureBar({ onSaved }) {
       setError('Image must be smaller than 8MB')
       return
     }
-    setIsParsingImage(true)
     setError(null)
-    try {
-      const parsed = await parseExpenseImage(file)
-      setDraft(parsed)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setIsParsingImage(false)
-    }
+    setImageNote('')
+    setPendingImage(file)
   }
 
   const handleImageInputChange = (event) => {
@@ -90,6 +97,28 @@ export default function CaptureBar({ onSaved }) {
     }
   }
 
+  const handleImageCancel = () => {
+    setPendingImage(null)
+    setImageNote('')
+  }
+
+  const handleImageSubmit = async (event) => {
+    event.preventDefault()
+    if (!pendingImage || isParsingImage) return
+    setIsParsingImage(true)
+    setError(null)
+    try {
+      const parsed = await parseExpenseImage(pendingImage, imageNote.trim() || undefined)
+      handleParsed(parsed)
+      setPendingImage(null)
+      setImageNote('')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsParsingImage(false)
+    }
+  }
+
   const handleSaved = () => {
     setDraft(null)
     setText('')
@@ -103,7 +132,7 @@ export default function CaptureBar({ onSaved }) {
         <input
           type="text"
           className="capture-bar__input"
-          placeholder='Try "Paid 450 for groceries at DMart today", or paste a screenshot'
+          placeholder='Try "Paid 450 for groceries at DMart today", or paste/attach a screenshot'
           value={text}
           onChange={(event) => {
             setText(event.target.value)
@@ -145,11 +174,43 @@ export default function CaptureBar({ onSaved }) {
         </button>
       </form>
       {isListening && <p className="capture-bar__hint">Listening… speak your expense, then tap the mic to stop.</p>}
-      {isParsingImage && <p className="capture-bar__hint">Reading screenshot…</p>}
       {speechError && <p className="capture-bar__error">Voice input error: {speechError}</p>}
       {error && <p className="capture-bar__error">{error}</p>}
+      {pendingImage && (
+        <form className="capture-bar__image-note" onSubmit={handleImageSubmit}>
+          <span className="capture-bar__image-filename" title={pendingImage.name}>
+            <PhotoCameraIcon fontSize="inherit" /> {pendingImage.name}
+          </span>
+          <input
+            type="text"
+            className="capture-bar__image-note-input"
+            placeholder='Add a note (optional) — e.g. "split 3 ways, my share is 200"'
+            value={imageNote}
+            onChange={(event) => setImageNote(event.target.value)}
+            maxLength={MAX_IMAGE_NOTE_LENGTH}
+            autoFocus
+          />
+          <button type="button" onClick={handleImageCancel} disabled={isParsingImage}>
+            Cancel
+          </button>
+          <button type="submit" className="capture-bar__image-note-submit" disabled={isParsingImage}>
+            {isParsingImage ? 'Reading…' : 'Add expense'}
+          </button>
+        </form>
+      )}
       {draft && (
         <ConfirmExpenseModal draft={draft} onClose={() => setDraft(null)} onSaved={handleSaved} />
+      )}
+      {batchDrafts && (
+        <BatchConfirmModal
+          drafts={batchDrafts}
+          onClose={() => {
+            setBatchDrafts(null)
+            setText('')
+            setSource('text')
+          }}
+          onSaved={() => onSaved?.()}
+        />
       )}
     </div>
   )

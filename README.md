@@ -1,7 +1,8 @@
 # Expense Tracker
 
-Voice/text-driven personal expense tracker. See [docs/PLAN.md](docs/PLAN.md) for the full
-architecture, data model, and build phases (local-only, not tracked in git).
+Personal expense tracker — log spending by typing, speaking, or uploading a payment
+screenshot, and an LLM turns it into structured data. See [docs/PLAN.md](docs/PLAN.md)
+for the full architecture, data model, and build phases (local-only, not tracked in git).
 
 **Stack:** React + JavaScript (Vite, vanilla CSS) · FastAPI · MongoDB · Google Gemini API (`gemini-3.5-flash-lite`)
 
@@ -11,6 +12,25 @@ ExpenseTracker/
   backend/      FastAPI app
   docs/         Planning notes & memory log (local-only, gitignored)
 ```
+
+---
+
+## Adding expenses
+
+Four ways to capture an expense, all reviewed/editable before saving (never
+auto-saved):
+
+- **Type** a sentence: "Paid 450 for groceries at DMart today".
+- **Speak** it (mic button, browser speech-to-text).
+- **Upload or paste a screenshot** of a payment app (Swiggy, Blinkit, Rapido, PhonePe,
+  Google Pay, Paytm, etc.) — the image is sent to Gemini for extraction and never
+  stored. You can attach an optional note with it for anything not visible in the
+  image itself, e.g. "split 3 ways, my share is 200" or "this one's groceries not
+  food". See [docs/IMAGE_EXPENSE_PLAN.md](docs/IMAGE_EXPENSE_PLAN.md).
+- **Batch entry**: a sentence describing several purchases ("Uber 200, lunch 350 at
+  Swiggy, coffee 120") or a payment-history screenshot listing multiple transactions
+  both return one draft per item, reviewed together before a single "Save all". See
+  [docs/BATCH_EXPENSE_PLAN.md](docs/BATCH_EXPENSE_PLAN.md).
 
 ---
 

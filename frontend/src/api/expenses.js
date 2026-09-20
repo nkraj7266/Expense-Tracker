@@ -7,9 +7,10 @@ export function parseExpense(text, source = 'text') {
   })
 }
 
-export function parseExpenseImage(file) {
+export function parseExpenseImage(file, note) {
   const formData = new FormData()
   formData.append('image', file)
+  if (note) formData.append('text', note)
   return request('/expenses/parse-image', {
     method: 'POST',
     body: formData,
@@ -20,6 +21,13 @@ export function createExpense(expense) {
   return request('/expenses', {
     method: 'POST',
     body: JSON.stringify(expense),
+  })
+}
+
+export function batchCreateExpenses(expenses) {
+  return request('/expenses/batch', {
+    method: 'POST',
+    body: JSON.stringify({ expenses }),
   })
 }
 

@@ -3,12 +3,22 @@ from typing import Optional
 
 from bson import ObjectId
 from bson.errors import InvalidId
-from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Request, UploadFile
 
 from auth.dependencies import get_current_user
 from database import expenses_collection
-from llm import parse_expense_image_bytes, parse_expense_text
-from models import Category, ExpenseCreate, ExpenseOut, ExpenseUpdate, ParseRequest, ParsedExpense
+from llm import MAX_BATCH_ITEMS, parse_expense_image_bytes, parse_expense_text
+from models import (
+    Category,
+    ExpenseBatchCreate,
+    ExpenseBatchFailure,
+    ExpenseBatchResult,
+    ExpenseCreate,
+    ExpenseOut,
+    ExpenseUpdate,
+    ParseRequest,
+    ParsedExpense,
+)
 from models_auth import UserOut
 from rate_limit import limiter
 
@@ -16,6 +26,7 @@ router = APIRouter(prefix="/expenses", tags=["expenses"])
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024
+MAX_IMAGE_NOTE_LENGTH = 500
 
 
 def _validate_image(image: UploadFile) -> None:
@@ -38,7 +49,7 @@ def _object_id(expense_id: str) -> ObjectId:
         raise HTTPException(status_code=400, detail="Invalid expense id")
 
 
-@router.post("/parse", response_model=ParsedExpense)
+@router.post("/parse", response_model=list[ParsedExpense])
 async def parse_expense(payload: ParseRequest, user: UserOut = Depends(get_current_user)):
     try:
         return await parse_expense_text(payload.text, source=payload.source)
@@ -48,39 +59,67 @@ async def parse_expense(payload: ParseRequest, user: UserOut = Depends(get_curre
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
-@router.post("/parse-image", response_model=ParsedExpense)
+@router.post("/parse-image", response_model=list[ParsedExpense])
 @limiter.limit("20/hour")
 async def parse_expense_image(
     request: Request,
     image: UploadFile = File(...),
+    text: Optional[str] = Form(None),
     user: UserOut = Depends(get_current_user),
 ):
     _validate_image(image)
+    note = text.strip() if text else None
+    if note and len(note) > MAX_IMAGE_NOTE_LENGTH:
+        raise HTTPException(status_code=400, detail=f"Note must be under {MAX_IMAGE_NOTE_LENGTH} characters")
     data = await image.read()
     if len(data) > MAX_IMAGE_SIZE_BYTES:
         raise HTTPException(status_code=400, detail="Image must be smaller than 8MB")
     try:
-        return await parse_expense_image_bytes(data, image.content_type)
+        return await parse_expense_image_bytes(data, image.content_type, note=note)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
-@router.post("", response_model=ExpenseOut, status_code=201)
-async def create_expense(payload: ExpenseCreate, user: UserOut = Depends(get_current_user)):
-    now = datetime.utcnow()
+def _build_expense_doc(payload: ExpenseCreate, user_id: str, now: datetime) -> dict:
     doc = payload.model_dump()
     doc["date"] = datetime.combine(payload.date, datetime.min.time())
     doc["category"] = payload.category.value
     doc["payment_method"] = payload.payment_method.value if payload.payment_method else None
     doc["source"] = payload.source.value
-    doc["user_id"] = user.id
+    doc["user_id"] = user_id
     doc["created_at"] = now
     doc["updated_at"] = now
+    return doc
+
+
+@router.post("", response_model=ExpenseOut, status_code=201)
+async def create_expense(payload: ExpenseCreate, user: UserOut = Depends(get_current_user)):
+    doc = _build_expense_doc(payload, user.id, datetime.utcnow())
     result = await expenses_collection.insert_one(doc)
     created = await expenses_collection.find_one({"_id": result.inserted_id})
     return _doc_to_out(created)
+
+
+@router.post("/batch", response_model=ExpenseBatchResult, status_code=201)
+async def create_expenses_batch(payload: ExpenseBatchCreate, user: UserOut = Depends(get_current_user)):
+    if len(payload.expenses) > MAX_BATCH_ITEMS:
+        raise HTTPException(status_code=422, detail=f"Batch is limited to {MAX_BATCH_ITEMS} expenses")
+
+    now = datetime.utcnow()
+    created: list[ExpenseOut] = []
+    failed: list[ExpenseBatchFailure] = []
+    for index, item in enumerate(payload.expenses):
+        try:
+            doc = _build_expense_doc(item, user.id, now)
+            result = await expenses_collection.insert_one(doc)
+            inserted = await expenses_collection.find_one({"_id": result.inserted_id})
+            created.append(_doc_to_out(inserted))
+        except Exception as exc:  # noqa: BLE001 - one bad row must not abort the rest
+            failed.append(ExpenseBatchFailure(index=index, error=str(exc)))
+
+    return ExpenseBatchResult(created=created, failed=failed)
 
 
 @router.get("", response_model=list[ExpenseOut])
