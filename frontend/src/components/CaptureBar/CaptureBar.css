@@ -36,6 +36,27 @@
   animation: capture-bar-pulse 1.4s ease-in-out infinite;
 }
 
+.capture-bar__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.capture-bar__image:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.capture-bar__file-input {
+  display: none;
+}
+
 @keyframes capture-bar-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
   50% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
@@ -80,7 +101,8 @@
     flex-basis: 100%;
   }
 
-  .capture-bar__mic {
+  .capture-bar__mic,
+  .capture-bar__image {
     width: var(--touch-target);
     height: var(--touch-target);
   }

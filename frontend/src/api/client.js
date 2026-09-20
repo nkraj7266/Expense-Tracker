@@ -24,9 +24,12 @@ function formatErrorDetail(detail, fallback) {
 }
 
 function doFetch(path, options) {
+  const isFormData = options.body instanceof FormData
   return fetch(`${API_BASE_URL}${path}`, {
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    headers: isFormData
+      ? { ...(options.headers || {}) }
+      : { 'Content-Type': 'application/json', ...(options.headers || {}) },
     ...options,
   })
 }

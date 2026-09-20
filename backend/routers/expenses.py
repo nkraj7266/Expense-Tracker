@@ -3,15 +3,26 @@ from typing import Optional
 
 from bson import ObjectId
 from bson.errors import InvalidId
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
 
 from auth.dependencies import get_current_user
 from database import expenses_collection
-from llm import parse_expense_text
+from llm import parse_expense_image_bytes, parse_expense_text
 from models import Category, ExpenseCreate, ExpenseOut, ExpenseUpdate, ParseRequest, ParsedExpense
 from models_auth import UserOut
+from rate_limit import limiter
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
+
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
+MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024
+
+
+def _validate_image(image: UploadFile) -> None:
+    if image.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="Image must be JPEG, PNG, or WEBP")
+    if image.size is not None and image.size > MAX_IMAGE_SIZE_BYTES:
+        raise HTTPException(status_code=400, detail="Image must be smaller than 8MB")
 
 
 def _doc_to_out(doc: dict) -> ExpenseOut:
@@ -31,6 +42,25 @@ def _object_id(expense_id: str) -> ObjectId:
 async def parse_expense(payload: ParseRequest, user: UserOut = Depends(get_current_user)):
     try:
         return await parse_expense_text(payload.text, source=payload.source)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.post("/parse-image", response_model=ParsedExpense)
+@limiter.limit("20/hour")
+async def parse_expense_image(
+    request: Request,
+    image: UploadFile = File(...),
+    user: UserOut = Depends(get_current_user),
+):
+    _validate_image(image)
+    data = await image.read()
+    if len(data) > MAX_IMAGE_SIZE_BYTES:
+        raise HTTPException(status_code=400, detail="Image must be smaller than 8MB")
+    try:
+        return await parse_expense_image_bytes(data, image.content_type)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except RuntimeError as exc:

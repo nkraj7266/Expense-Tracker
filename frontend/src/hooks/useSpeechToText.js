@@ -16,6 +16,7 @@ export default function useSpeechToText() {
   // timeout); these track text across such an internal restart so it isn't lost.
   const committedTranscriptRef = useRef('')
   const latestSessionTextRef = useRef('')
+  const restartTimeoutRef = useRef(null)
 
   const isSupported = Boolean(SpeechRecognitionImpl)
 
@@ -48,18 +49,26 @@ export default function useSpeechToText() {
     recognition.onend = () => {
       if (shouldListenRef.current) {
         const carry = latestSessionTextRef.current.trim()
-        if (carry) {
+        // Only commit if this isn't a re-hearing of what we already captured -
+        // Chrome frequently replays the tail of the last phrase into the next
+        // session if restarted instantly, which otherwise duplicates it.
+        if (carry && !committedTranscriptRef.current.endsWith(carry)) {
           committedTranscriptRef.current = committedTranscriptRef.current
             ? `${committedTranscriptRef.current} ${carry}`
             : carry
         }
         latestSessionTextRef.current = ''
-        try {
-          recognition.start()
-          return
-        } catch {
-          // Engine refused to restart (e.g. torn down during unmount) - stop cleanly below.
-        }
+        // Small delay lets the engine release its audio buffer before the next
+        // session starts, so it doesn't immediately re-transcribe the same audio.
+        restartTimeoutRef.current = setTimeout(() => {
+          try {
+            recognition.start()
+          } catch {
+            // Engine refused to restart (e.g. torn down during unmount) - stop cleanly below.
+            setIsListening(false)
+          }
+        }, 300)
+        return
       }
       setIsListening(false)
     }
@@ -67,6 +76,7 @@ export default function useSpeechToText() {
     recognitionRef.current = recognition
     return () => {
       shouldListenRef.current = false
+      clearTimeout(restartTimeoutRef.current)
       recognition.stop()
     }
   }, [isSupported])
@@ -84,6 +94,7 @@ export default function useSpeechToText() {
 
   const stop = useCallback(() => {
     shouldListenRef.current = false
+    clearTimeout(restartTimeoutRef.current)
     recognitionRef.current?.stop()
   }, [])
 

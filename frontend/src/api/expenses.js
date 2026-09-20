@@ -7,6 +7,15 @@ export function parseExpense(text, source = 'text') {
   })
 }
 
+export function parseExpenseImage(file) {
+  const formData = new FormData()
+  formData.append('image', file)
+  return request('/expenses/parse-image', {
+    method: 'POST',
+    body: formData,
+  })
+}
+
 export function createExpense(expense) {
   return request('/expenses', {
     method: 'POST',

@@ -34,6 +34,7 @@ class Source(str, Enum):
     VOICE = "voice"
     TEXT = "text"
     MANUAL = "manual"
+    IMAGE = "image"
 
 
 class ParseRequest(BaseModel):
