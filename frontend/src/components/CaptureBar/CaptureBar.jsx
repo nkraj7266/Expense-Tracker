@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import MicIcon from '@mui/icons-material/Mic'
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
+import ImageIcon from '@mui/icons-material/Image'
 import useSpeechToText from '../../hooks/useSpeechToText'
 import { parseExpense, parseExpenseImage } from '../../api/expenses'
 import ConfirmExpenseModal from '../ConfirmExpenseModal/ConfirmExpenseModal'
@@ -160,7 +160,7 @@ export default function CaptureBar({ onSaved }) {
           aria-label="Add expense from screenshot"
           title="Add expense from screenshot"
         >
-          <PhotoCameraIcon fontSize="small" />
+          <ImageIcon fontSize="small" />
         </button>
         <input
           type="file"
@@ -179,7 +179,7 @@ export default function CaptureBar({ onSaved }) {
       {pendingImage && (
         <form className="capture-bar__image-note" onSubmit={handleImageSubmit}>
           <span className="capture-bar__image-filename" title={pendingImage.name}>
-            <PhotoCameraIcon fontSize="inherit" /> {pendingImage.name}
+            <ImageIcon fontSize="inherit" /> {pendingImage.name}
           </span>
           <input
             type="text"
