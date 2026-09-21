@@ -12,6 +12,7 @@ categories_collection = db["categories"]
 budgets_collection = db["budgets"]
 users_collection = db["users"]
 refresh_tokens_collection = db["refresh_tokens"]
+login_events_collection = db["login_events"]
 
 
 async def ensure_indexes() -> None:
@@ -23,6 +24,7 @@ async def ensure_indexes() -> None:
     await users_collection.create_index("email", unique=True)
     await refresh_tokens_collection.create_index("token_hash", unique=True)
     await refresh_tokens_collection.create_index([("user_id", 1), ("expires_at", 1)])
+    await login_events_collection.create_index([("user_id", 1), ("occurred_at", -1)])
 
 
 DEFAULT_CATEGORIES = [

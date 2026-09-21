@@ -19,7 +19,7 @@ from auth.security import (
     verify_password,
 )
 from config import get_settings
-from database import refresh_tokens_collection, users_collection
+from database import login_events_collection, refresh_tokens_collection, users_collection
 from models_auth import UserCreate, UserLogin, UserOut
 from rate_limit import limiter
 
@@ -44,6 +44,7 @@ async def _issue_session(response: Response, user_id: str) -> None:
             "replaced_by": None,
         }
     )
+    await login_events_collection.insert_one({"user_id": user_id, "occurred_at": now})
     set_auth_cookies(response, access_token, refresh_token)
 
 

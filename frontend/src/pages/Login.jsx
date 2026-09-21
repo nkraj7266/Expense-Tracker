@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import PasswordInput from '../components/PasswordInput/PasswordInput'
 import './Login.css'
 
 function getGreeting() {
@@ -56,9 +57,8 @@ export default function Login() {
           </div>
           <div className="auth-card__field">
             <label htmlFor="login-password">Password</label>
-            <input
+            <PasswordInput
               id="login-password"
-              type="password"
               autoComplete="current-password"
               required
               value={password}

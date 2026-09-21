@@ -50,6 +50,7 @@
   color: var(--color-text-muted);
 }
 
+.app-shell__admin,
 .app-shell__theme-toggle,
 .app-shell__logout {
   display: flex;
@@ -63,6 +64,7 @@
   color: var(--color-text);
 }
 
+.app-shell__admin:hover,
 .app-shell__theme-toggle:hover,
 .app-shell__logout:hover {
   border-color: var(--color-primary);
@@ -101,6 +103,7 @@
     display: none;
   }
 
+  .app-shell__admin,
   .app-shell__theme-toggle,
   .app-shell__logout {
     width: var(--touch-target);

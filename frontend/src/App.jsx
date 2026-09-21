@@ -1,16 +1,18 @@
-import { NavLink, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import { NavLink, Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import TodayIcon from '@mui/icons-material/Today'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import HistoryIcon from '@mui/icons-material/History'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import CaptureBar from './components/CaptureBar/CaptureBar'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import History from './pages/History'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import AdminPanel from './pages/AdminPanel'
 import { useExpensesRefresh } from './context/ExpensesRefreshContext'
 import { useAuth } from './context/AuthContext'
 import { useTheme } from './context/ThemeContext'
@@ -25,6 +27,11 @@ function RequireAuth() {
   return <Outlet />
 }
 
+function RequireAdmin() {
+  const { user } = useAuth()
+  return user.access_level === 'admin' ? <Outlet /> : <Navigate to="/" replace />
+}
+
 const TAB_ICONS = {
   today: <TodayIcon fontSize="small" />,
   dashboard: <DashboardIcon fontSize="small" />,
@@ -35,6 +42,7 @@ function AppShell() {
   const { bumpRefresh } = useExpensesRefresh()
   const { user, logout } = useAuth()
   const { resolvedTheme, toggleTheme } = useTheme()
+  const navigate = useNavigate()
 
   return (
     <div className="app-shell">
@@ -49,6 +57,16 @@ function AppShell() {
         </nav>
         <div className="app-shell__account">
           <span className="app-shell__user">{user.display_name || user.email}</span>
+          {user.access_level === 'admin' && (
+            <button
+              className="app-shell__admin"
+              onClick={() => navigate('/admin')}
+              aria-label="Open admin panel"
+              title="Admin panel"
+            >
+              <AdminPanelSettingsIcon fontSize="small" />
+            </button>
+          )}
           <button
             className="app-shell__theme-toggle"
             onClick={toggleTheme}
@@ -96,6 +114,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/history" element={<History />} />
+          <Route element={<RequireAdmin />}>
+            <Route path="/admin" element={<AdminPanel />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

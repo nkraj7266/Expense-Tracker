@@ -1,7 +1,13 @@
 import datetime as dt
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
+
+
+class AccessLevel(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 
 class UserCreate(BaseModel):
@@ -29,4 +35,5 @@ class UserOut(BaseModel):
     id: str
     email: str
     display_name: Optional[str] = None
+    access_level: AccessLevel = AccessLevel.USER
     created_at: dt.datetime

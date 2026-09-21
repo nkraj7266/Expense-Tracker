@@ -9,7 +9,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from config import get_settings
 from database import ensure_indexes, seed_categories
 from rate_limit import limiter
-from routers import analytics, auth, categories, expenses
+from routers import admin, analytics, auth, categories, expenses
 
 settings = get_settings()
 
@@ -39,6 +39,7 @@ app.include_router(auth.router)
 app.include_router(expenses.router)
 app.include_router(categories.router)
 app.include_router(analytics.router)
+app.include_router(admin.router)
 
 
 @app.get("/health")
