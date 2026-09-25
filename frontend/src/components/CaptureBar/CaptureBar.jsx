@@ -1,11 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import MicIcon from '@mui/icons-material/Mic'
 import ImageIcon from '@mui/icons-material/Image'
+import { AnimatePresence, motion } from 'motion/react'
 import useSpeechToText from '../../hooks/useSpeechToText'
 import { parseExpense, parseExpenseImage } from '../../api/expenses'
 import ConfirmExpenseModal from '../ConfirmExpenseModal/ConfirmExpenseModal'
 import BatchConfirmModal from '../BatchConfirmModal/BatchConfirmModal'
+import { DURATION_BASE, EASE_STANDARD } from '../../lib/motion'
 import './CaptureBar.css'
+
+const FADE_HEIGHT_TRANSITION = { duration: DURATION_BASE, ease: EASE_STANDARD }
+const fadeHeightProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: FADE_HEIGHT_TRANSITION,
+}
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024
@@ -173,31 +183,50 @@ export default function CaptureBar({ onSaved }) {
           {isParsing ? 'Parsing…' : 'Add'}
         </button>
       </form>
-      {isListening && <p className="capture-bar__hint">Listening… speak your expense, then tap the mic to stop.</p>}
-      {speechError && <p className="capture-bar__error">Voice input error: {speechError}</p>}
-      {error && <p className="capture-bar__error">{error}</p>}
-      {pendingImage && (
-        <form className="capture-bar__image-note" onSubmit={handleImageSubmit}>
-          <span className="capture-bar__image-filename" title={pendingImage.name}>
-            <ImageIcon fontSize="inherit" /> {pendingImage.name}
-          </span>
-          <input
-            type="text"
-            className="capture-bar__image-note-input"
-            placeholder='Add a note (optional) — e.g. "split 3 ways, my share is 200"'
-            value={imageNote}
-            onChange={(event) => setImageNote(event.target.value)}
-            maxLength={MAX_IMAGE_NOTE_LENGTH}
-            autoFocus
-          />
-          <button type="button" onClick={handleImageCancel} disabled={isParsingImage}>
-            Cancel
-          </button>
-          <button type="submit" className="capture-bar__image-note-submit" disabled={isParsingImage}>
-            {isParsingImage ? 'Reading…' : 'Add expense'}
-          </button>
-        </form>
-      )}
+      <AnimatePresence initial={false}>
+        {isListening && (
+          <motion.p key="listening-hint" className="capture-bar__hint" {...fadeHeightProps}>
+            Listening… speak your expense, then tap the mic to stop.
+          </motion.p>
+        )}
+        {speechError && (
+          <motion.p key="speech-error" className="capture-bar__error" {...fadeHeightProps}>
+            Voice input error: {speechError}
+          </motion.p>
+        )}
+        {error && (
+          <motion.p key="capture-error" className="capture-bar__error" {...fadeHeightProps}>
+            {error}
+          </motion.p>
+        )}
+        {pendingImage && (
+          <motion.form
+            key="image-note"
+            className="capture-bar__image-note"
+            onSubmit={handleImageSubmit}
+            {...fadeHeightProps}
+          >
+            <span className="capture-bar__image-filename" title={pendingImage.name}>
+              <ImageIcon fontSize="inherit" /> {pendingImage.name}
+            </span>
+            <input
+              type="text"
+              className="capture-bar__image-note-input"
+              placeholder='Add a note (optional) — e.g. "split 3 ways, my share is 200"'
+              value={imageNote}
+              onChange={(event) => setImageNote(event.target.value)}
+              maxLength={MAX_IMAGE_NOTE_LENGTH}
+              autoFocus
+            />
+            <button type="button" onClick={handleImageCancel} disabled={isParsingImage}>
+              Cancel
+            </button>
+            <button type="submit" className="capture-bar__image-note-submit" disabled={isParsingImage}>
+              {isParsingImage ? 'Reading…' : 'Add expense'}
+            </button>
+          </motion.form>
+        )}
+      </AnimatePresence>
       {draft && (
         <ConfirmExpenseModal draft={draft} onClose={() => setDraft(null)} onSaved={handleSaved} />
       )}

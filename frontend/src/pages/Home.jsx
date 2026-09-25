@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import ExpenseList from '../components/ExpenseList/ExpenseList'
 import ExpenseListSkeleton from '../components/ExpenseList/ExpenseListSkeleton'
+import AnimatedNumber from '../components/AnimatedNumber/AnimatedNumber'
 import useExpenses from '../hooks/useExpenses'
 import useCategories from '../hooks/useCategories'
 import { useExpensesRefresh } from '../context/ExpensesRefreshContext'
@@ -24,7 +25,7 @@ export default function Home() {
       <div className="home-page__header">
         <h1>Today</h1>
         <span className="home-page__total">
-          {expenses[0]?.currency || 'INR'} {total.toFixed(2)}
+          {expenses[0]?.currency || 'INR'} <AnimatedNumber value={total} />
         </span>
       </div>
       {loading && <ExpenseListSkeleton />}

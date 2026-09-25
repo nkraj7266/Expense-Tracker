@@ -39,7 +39,6 @@
     max-height: 80vh;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     padding-top: calc(var(--space-5) + 14px);
-    animation: confirm-dialog-slide-up 0.3s ease;
   }
 
   .confirm-dialog.modal::before {
@@ -60,14 +59,5 @@
 
   .confirm-dialog__actions button {
     min-height: var(--touch-target);
-  }
-}
-
-@keyframes confirm-dialog-slide-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
   }
 }

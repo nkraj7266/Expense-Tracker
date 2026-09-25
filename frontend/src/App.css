@@ -26,7 +26,9 @@
   gap: var(--space-4);
 }
 
-.app-shell__nav a {
+.app-shell__nav-link {
+  position: relative;
+  display: inline-flex;
   text-decoration: none;
   color: var(--color-text-muted);
   font-weight: 500;
@@ -34,9 +36,21 @@
   border-radius: var(--radius-sm);
 }
 
-.app-shell__nav a.active {
+.app-shell__nav-link.active {
   color: var(--color-primary);
-  background: rgba(79, 70, 229, 0.12);
+}
+
+.app-shell__nav-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-wash);
+  z-index: 0;
+}
+
+.app-shell__nav-label {
+  position: relative;
+  z-index: 1;
 }
 
 .app-shell__account {
@@ -130,6 +144,7 @@
   }
 
   .app-shell__tab {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -144,5 +159,19 @@
 
   .app-shell__tab.active {
     color: var(--color-primary);
+  }
+
+  .app-shell__tab > svg,
+  .app-shell__tab > span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .app-shell__tab-pill {
+    position: absolute;
+    inset: 4px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent-wash);
+    z-index: 0;
   }
 }

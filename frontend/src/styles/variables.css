@@ -1,19 +1,40 @@
 :root {
   color-scheme: light dark;
 
-  --color-bg: #f8fafc;
+  --color-bg: #f7f5f0;
   --color-surface: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-danger: #dc2626;
-  --color-success: #16a34a;
+  --color-surface-sunken: #f1eee7;
+  --color-border: #e5e0d6;
+  --color-border-strong: #d8d1c3;
+  --color-text: #1b1a17;
+  --color-text-muted: #6b6558;
+  --color-primary: #b5573a;
+  --color-primary-hover: #9c4931;
+  --color-danger: #c1352b;
+  --color-success: #4b7a5e;
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --color-accent-wash: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --color-danger-wash: color-mix(in srgb, var(--color-danger) 10%, transparent);
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Fraunces', Georgia, serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-md: 17px;
+  --font-size-lg: 20px;
+  --font-size-xl: 28px;
+  --font-size-2xl: 40px;
+  --font-size-3xl: 56px;
+
+  --line-height-tight: 1.15;
+  --line-height-base: 1.5;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -21,9 +42,19 @@
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
 
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 1px 2px rgba(27, 26, 23, 0.04);
+  --shadow-md: 0 8px 24px rgba(27, 26, 23, 0.08);
+
+  --motion-duration-fast: 120ms;
+  --motion-duration-base: 200ms;
+  --motion-duration-slow: 320ms;
+  --motion-duration-count-up: 600ms;
+  --motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-in: cubic-bezier(0.4, 0, 1, 1);
 
   /* Mobile breakpoint is a literal (640px) in each @media query below —
      CSS custom properties can't be used inside media query conditions.
@@ -42,25 +73,33 @@
    frontend/src/context/ThemeContext.jsx for the JS side. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --color-bg: #0f172a;
-    --color-surface: #1e293b;
-    --color-border: #334155;
-    --color-text: #f1f5f9;
-    --color-text-muted: #94a3b8;
-    --color-primary: #818cf8;
-    --color-primary-hover: #6366f1;
+    --color-bg: #17130f;
+    --color-surface: #221c16;
+    --color-surface-sunken: #14110d;
+    --color-border: #3a3226;
+    --color-border-strong: #4a4032;
+    --color-text: #f2eee4;
+    --color-text-muted: #a89d89;
+    --color-primary: #e08a63;
+    --color-primary-hover: #ea9e7c;
+    --color-danger: #e07a68;
+    --color-success: #7fae86;
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --color-bg: #0f172a;
-  --color-surface: #1e293b;
-  --color-border: #334155;
-  --color-text: #f1f5f9;
-  --color-text-muted: #94a3b8;
-  --color-primary: #818cf8;
-  --color-primary-hover: #6366f1;
+  --color-bg: #17130f;
+  --color-surface: #221c16;
+  --color-surface-sunken: #14110d;
+  --color-border: #3a3226;
+  --color-border-strong: #4a4032;
+  --color-text: #f2eee4;
+  --color-text-muted: #a89d89;
+  --color-primary: #e08a63;
+  --color-primary-hover: #ea9e7c;
+  --color-danger: #e07a68;
+  --color-success: #7fae86;
 }
 
 :root[data-theme='light'] {

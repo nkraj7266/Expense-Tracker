@@ -11,8 +11,10 @@
 }
 
 .home-page__total {
-  font-size: 20px;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .home-page__error {

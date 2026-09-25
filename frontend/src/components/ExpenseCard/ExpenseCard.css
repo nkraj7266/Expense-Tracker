@@ -47,7 +47,10 @@
 }
 
 .expense-card__amount {
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--font-size-md);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -71,7 +74,7 @@
 
 .expense-card__actions button:hover {
   color: var(--color-primary);
-  background: rgba(79, 70, 229, 0.1);
+  background: var(--color-accent-wash);
 }
 
 .expense-card__actions button.expense-card__delete {
@@ -79,7 +82,7 @@
 }
 
 .expense-card__actions button.expense-card__delete:hover {
-  background: rgba(220, 38, 38, 0.1);
+  background: var(--color-danger-wash);
 }
 
 .expense-card__error {

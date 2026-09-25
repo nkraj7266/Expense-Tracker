@@ -84,17 +84,17 @@
 }
 
 .admin-panel__badge--admin {
-  background: rgba(79, 70, 229, 0.14);
+  background: var(--color-accent-wash);
   color: var(--color-primary);
 }
 
 .admin-panel__badge--active {
-  background: rgba(22, 163, 74, 0.14);
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
   color: var(--color-success);
 }
 
 .admin-panel__badge--inactive {
-  background: rgba(220, 38, 38, 0.14);
+  background: var(--color-danger-wash);
   color: var(--color-danger);
 }
 
@@ -120,8 +120,10 @@
 }
 
 .admin-panel__stat-value {
-  font-size: 16px;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .admin-panel__edit-form {

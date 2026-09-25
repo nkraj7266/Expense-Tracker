@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { MotionConfig } from 'motion/react'
 import './styles/variables.css'
 import './styles/global.css'
 import App from './App.jsx'
@@ -11,16 +12,18 @@ import { NotificationProvider } from './context/NotificationContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
-      <NotificationProvider>
-        <BrowserRouter>
-          <AuthProvider>
-            <ExpensesRefreshProvider>
-              <App />
-            </ExpensesRefreshProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </NotificationProvider>
-    </ThemeProvider>
+    <MotionConfig reducedMotion="user">
+      <ThemeProvider>
+        <NotificationProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <ExpensesRefreshProvider>
+                <App />
+              </ExpensesRefreshProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </NotificationProvider>
+      </ThemeProvider>
+    </MotionConfig>
   </StrictMode>,
 )

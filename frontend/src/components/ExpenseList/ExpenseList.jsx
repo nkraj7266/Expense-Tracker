@@ -1,4 +1,6 @@
+import { AnimatePresence, motion } from 'motion/react'
 import ExpenseCard from '../ExpenseCard/ExpenseCard'
+import { DURATION_BASE, EASE_STANDARD } from '../../lib/motion'
 import './ExpenseList.css'
 
 function groupByDay(expenses) {
@@ -36,9 +38,20 @@ export default function ExpenseList({ expenses, categories, onChanged, emptyMess
               </span>
             </div>
             <div className="expense-list__items">
-              {items.map((expense) => (
-                <ExpenseCard key={expense.id} expense={expense} categories={categories} onChanged={onChanged} />
-              ))}
+              <AnimatePresence initial={false}>
+                {items.map((expense) => (
+                  <motion.div
+                    key={expense.id}
+                    layout
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: DURATION_BASE, ease: EASE_STANDARD }}
+                  >
+                    <ExpenseCard expense={expense} categories={categories} onChanged={onChanged} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </section>
         )
